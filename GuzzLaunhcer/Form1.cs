@@ -162,7 +162,7 @@ namespace GuzzLaunhcer
                     MessageBox.Show("OYUN SAYISI = "+games.Length.ToString());
                     foreach(string game in games)
                     {
-                        string[] parts = game.Split('>');
+                        string[] parts = game.Split('<');
 
                         name = parts[0];
                         version = parts[1];
@@ -271,7 +271,7 @@ public class GameBox
         #region LabelValues
         //this.gameText.Location = new Point(gameLocation.X + GuzzLaunhcer.GuzzLauncher.imageSize/2, gameLocation.Y + GuzzLaunhcer.GuzzLauncher.imageSize+6);
         this.gameText.Location = new Point(gameLocation.X , gameLocation.Y + GuzzLaunhcer.GuzzLauncher.imageSize + 6);
-        this.gameText.Size = new Size(GuzzLaunhcer.GuzzLauncher.imageSize, 25);
+        this.gameText.Size = new Size(GuzzLaunhcer.GuzzLauncher.imageSize, 35);
         this.gameText.Text = gameName;
 
         //DEFAULT VALUES
@@ -286,7 +286,7 @@ public class GameBox
         CheckGameStatus();
 
         #region ButtonValues
-        this.gameButton.Location = new Point(gameLocation.X, gameLocation.Y + GuzzLaunhcer.GuzzLauncher.imageSize + 36);
+        this.gameButton.Location = new Point(gameLocation.X, gameLocation.Y + GuzzLaunhcer.GuzzLauncher.imageSize + 44);
         this.gameButton.Size = new Size(GuzzLaunhcer.GuzzLauncher.imageSize, 32);
         switch (gameStatus)
         {
