@@ -237,17 +237,43 @@ public class GameBox
         //MessageBox.Show(GamePath);
         string GameConfigPath = Path.Combine(GamePath, "GuzzLauncherConfig.txt");
         //MessageBox.Show(GameConfigPath);
-        if (!File.Exists(GamePath))
+        if (Directory.Exists(GamePath) == false)
         {
-            MessageBox.Show("GameDirectoryleri OLUŞTURULDU");
-            Directory.CreateDirectory(GamePath);
-            File.WriteAllText(GameConfigPath,version);
+            MessageBox.Show(this.gameName + " OYUNU KLASÖRÜ BULUNAMADI");
+            //MessageBox.Show(this.gameName + " GameDirectorysi OLUŞTURULDU");
+            //Directory.CreateDirectory(GamePath);
+            //File.WriteAllText(GameConfigPath,version);
+
             //File.WriteAllText("C:\\GuzzLauncher\\31\\zort.txt","V0.2");
             //File.AppendAllText(GameConfigPath, "V0.1");
+
+            this.gameStatus = GameStatus.NotDownloaded;
+        }
+        else if(File.Exists(GameConfigPath))
+        {
+            MessageBox.Show(this.gameName + " GameDirectorysi BULUNDU");
+
+            string[] GameConfigLines = File.ReadAllLines(GameConfigPath);
+            if(GameConfigLines[0] != version)
+            {
+                MessageBox.Show(gameName + " adlı oyunda sürüm uyuşmazlığı, Yeni = " + version + " Eski = " + GameConfigLines[0]);
+                this.gameStatus = GameStatus.UpdateNeeded;
+            }
+            else if (GameConfigLines[0] == version)
+            {
+                MessageBox.Show("SÜRÜM GÜNCEL");
+                this.gameStatus = GameStatus.ReadyToPlay;
+            }
+            else
+            {
+                MessageBox.Show("Bİ BOKLAR VAR");
+            }
+
         }
         else
-        {
-            this.gameStatus = GameStatus.ReadyToPlay;
+        { 
+            MessageBox.Show("ANA KLASÖR VAR AMA CONFIGI YOK O YUZDEN CONFIG OLUSTURULUYOR + " + gameName);
+            File.WriteAllText(GameConfigPath, version);
         }
     }
 }
