@@ -18,7 +18,7 @@ namespace GuzzLaunhcer
     {
         string appDir;
         string configFileDir;
-        string downloadDir;
+        public static string downloadDir;
 
         //ARRAY SYSTEM
         public static List<GameBox> gameBoxList = new List<GameBox>();
@@ -40,6 +40,9 @@ namespace GuzzLaunhcer
         {
             appDir = AppDomain.CurrentDomain.BaseDirectory;
             configFileDir = System.IO.Path.Combine(appDir, "config.txt");
+            downloadDir = File.ReadLines(configFileDir).First();
+            MessageBox.Show(downloadDir);
+
 
 
             //FirstSetupCheck();
@@ -87,14 +90,14 @@ namespace GuzzLaunhcer
 
         private void StartGameBoxes()
         {
-            CreateGameBox("31", DefaultPoint, Properties.Resources.artworks_000013535097_9rz0uo_t500x500);
-            CreateGameBox("32fgdfdgfdgfdgdf", DefaultPoint, Properties.Resources.artworks_000013535097_9rz0uo_t500x500);
+            CreateGameBox("31", DefaultPoint, Properties.Resources.artworks_000013535097_9rz0uo_t500x500,"V0.1");
+            CreateGameBox("32fgdfdgfdgfdgdf", DefaultPoint, Properties.Resources.artworks_000013535097_9rz0uo_t500x500,"V0.25");
 
         }
 
-        private void CreateGameBox(string name, Point Location, Image image)
+        private void CreateGameBox(string name, Point Location, Image image,string version)
         {
-            GameBox gameBox = new GameBox(name, Location, image);
+            GameBox gameBox = new GameBox(name, Location, image,version);
             //GameBox gameBox = new GameBox("Ahmet Kaya Ball 2", new Point(12, 12), Properties.Resources.artworks_000013535097_9rz0uo_t500x500);
 
             this.Controls.Add(gameBox.gamePictureBox);  // BU İKİSİ RENDERLANMASINI SAĞLIYOR
@@ -110,7 +113,7 @@ namespace GuzzLaunhcer
 
 
         public static async Task DownloadGame(string downloadPath,string gameFolderName, string url = "https://github.com/oguzk234/AhmetKayaBall_Beta_V0.23")
-        {
+        { //GAME FOLDER NAME İLE GAME NAME AYNI OLMALI
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -140,6 +143,7 @@ namespace GuzzLaunhcer
 public class GameBox
 {
 
+    public string version;
     public string gameName;
     public Point gameLocation;
     public Image gameImage;
@@ -150,8 +154,9 @@ public class GameBox
     public enum GameStatus { NotDownloaded,UpdateNeeded,ReadyToPlay }
     public GameStatus gameStatus = GameStatus.NotDownloaded;
 
-    public GameBox(string GameName, Point GameLocation, Image GameImage)
+    public GameBox(string GameName, Point GameLocation, Image GameImage , string Version)
     {
+        version = Version;
         gameName = GameName; gameLocation = GameLocation; gameImage = GameImage;
 
         gameText = new Label();
@@ -191,7 +196,7 @@ public class GameBox
         //DEFAULT VALUES
         #endregion
 
-
+        CheckGameStatus();
 
         #region ButtonValues
         this.gameButton.Location = new Point(gameLocation.X, gameLocation.Y + GuzzLaunhcer.GuzzLauncher.imageSize + 36);
@@ -228,7 +233,22 @@ public class GameBox
 
     public void CheckGameStatus()
     {
-
+        string GamePath = Path.Combine(GuzzLaunhcer.GuzzLauncher.downloadDir, this.gameName);
+        //MessageBox.Show(GamePath);
+        string GameConfigPath = Path.Combine(GamePath, "GuzzLauncherConfig.txt");
+        //MessageBox.Show(GameConfigPath);
+        if (!File.Exists(GamePath))
+        {
+            MessageBox.Show("GameDirectoryleri OLUŞTURULDU");
+            Directory.CreateDirectory(GamePath);
+            File.WriteAllText(GameConfigPath,version);
+            //File.WriteAllText("C:\\GuzzLauncher\\31\\zort.txt","V0.2");
+            //File.AppendAllText(GameConfigPath, "V0.1");
+        }
+        else
+        {
+            this.gameStatus = GameStatus.ReadyToPlay;
+        }
     }
 }
 
