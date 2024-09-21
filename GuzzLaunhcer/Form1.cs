@@ -40,18 +40,19 @@ namespace GuzzLaunhcer
         {
             appDir = AppDomain.CurrentDomain.BaseDirectory;
             configFileDir = System.IO.Path.Combine(appDir, "config.txt");
-            downloadDir = File.ReadLines(configFileDir).First();
-            MessageBox.Show(downloadDir);
+            //downloadDir = File.ReadLines(configFileDir).First(); // FIRST SETUP CHECK DE KONTROL EDILIYOR
+
+            //MessageBox.Show(downloadDir);
+            FirstSetupCheck();
 
 
             //gameBoxDataList = await GetGamesOnline();
-            foreach(GameBoxData gameData in await GetGamesOnline())
+            foreach (GameBoxData gameData in await GetGamesOnline())
             {
                 GameBox gBox = CreateGameBox(gameData.NName, DefaultPoint, gameData.IImage, gameData.VVersion);
                 //gBox.gameButton
             }
 
-            //FirstSetupCheck();
             //await GetGamesOnline(); //BU BİTMEDEN ALTA GEÇMİYO MÜKEMMEL (sanırım)
             //StartGameBoxes();
 
