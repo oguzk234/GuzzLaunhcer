@@ -194,8 +194,21 @@ public class GameBox
 
         #region ButtonValues
         this.gameButton.Location = new Point(gameLocation.X, gameLocation.Y + GuzzLaunhcer.GuzzLauncher.imageSize + 14);
-        this.gameButton.Location
+        this.gameButton.Size = new Size(60, 36);
+
+        //DEFAULT VALUES
+        this.gameButton.Name = this.gameName + "Button";
+        this.gameButton.TabIndex = 0;
+        this.gameButton.Text = "Change Download Path";
+        this.gameButton.UseVisualStyleBackColor = true;
+        this.gameButton.Click += new System.EventHandler(this.OnButtonClick);
+        //DEFAULT VALUES
         #endregion
+    }
+
+    public void OnButtonClick(object sender, EventArgs e)
+    {
+
     }
 
     public void CheckGameStatus()
