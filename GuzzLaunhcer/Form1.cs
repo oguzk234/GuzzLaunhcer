@@ -100,6 +100,7 @@ namespace GuzzLaunhcer
             this.Controls.Add(gameBox.gamePictureBox);  // BU İKİSİ RENDERLANMASINI SAĞLIYOR
             this.Controls.Add(gameBox.gameText);
             gameBox.gameText.BringToFront();
+            this.Controls.Add(gameBox.gameButton);
 
             imageCount++;
             DefaultPoint = new Point(12 + ((imageCount * imageSize) + (imageSpace * imageCount)), 12);
@@ -147,7 +148,7 @@ public class GameBox
     public Label gameText;// KENDI OLUSTURULACAK
     public Button gameButton;
     public enum GameStatus { NotDownloaded,UpdateNeeded,ReadyToPlay }
-    public GameStatus gameStatus;
+    public GameStatus gameStatus = GameStatus.NotDownloaded;
 
     public GameBox(string GameName, Point GameLocation, Image GameImage)
     {
@@ -193,13 +194,27 @@ public class GameBox
 
 
         #region ButtonValues
-        this.gameButton.Location = new Point(gameLocation.X, gameLocation.Y + GuzzLaunhcer.GuzzLauncher.imageSize + 14);
-        this.gameButton.Size = new Size(60, 36);
+        this.gameButton.Location = new Point(gameLocation.X, gameLocation.Y + GuzzLaunhcer.GuzzLauncher.imageSize + 36);
+        this.gameButton.Size = new Size(GuzzLaunhcer.GuzzLauncher.imageSize, 32);
+        switch (gameStatus)
+        {
+            case GameStatus.NotDownloaded:
+                this.gameButton.Text = "Download";
+                this.gameButton.ForeColor = Color.Red;
+                break;
+            case GameStatus.ReadyToPlay:
+                this.gameButton.Text = "Play";
+                this.gameButton.ForeColor = Color.Green;
+                break;
+            case GameStatus.UpdateNeeded:
+                this.gameButton.Text = "Update";
+                this.gameButton.ForeColor = Color.Orange;
+                break;
+        }
 
         //DEFAULT VALUES
         this.gameButton.Name = this.gameName + "Button";
         this.gameButton.TabIndex = 0;
-        this.gameButton.Text = "Change Download Path";
         this.gameButton.UseVisualStyleBackColor = true;
         this.gameButton.Click += new System.EventHandler(this.OnButtonClick);
         //DEFAULT VALUES
@@ -208,7 +223,7 @@ public class GameBox
 
     public void OnButtonClick(object sender, EventArgs e)
     {
-
+        MessageBox.Show(sender.ToString());
     }
 
     public void CheckGameStatus()
