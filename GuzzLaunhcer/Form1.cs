@@ -28,7 +28,7 @@ namespace GuzzLaunhcer
         public static Point DefaultPoint = new Point(12, 12);
         //
 
-
+        //public static List<GameBoxData> gameBoxDataList = new List<GameBoxData>();
 
 
         public GuzzLauncher()
@@ -36,7 +36,7 @@ namespace GuzzLaunhcer
             InitializeComponent();
         }
 
-        private void GuzzLauncher_Load(object sender, EventArgs e)
+        private async void GuzzLauncher_Load(object sender, EventArgs e)
         {
             appDir = AppDomain.CurrentDomain.BaseDirectory;
             configFileDir = System.IO.Path.Combine(appDir, "config.txt");
@@ -44,9 +44,16 @@ namespace GuzzLaunhcer
             MessageBox.Show(downloadDir);
 
 
+            //gameBoxDataList = await GetGamesOnline();
+            foreach(GameBoxData gameData in await GetGamesOnline())
+            {
+                GameBox gBox = CreateGameBox(gameData.NName, DefaultPoint, gameData.IImage, gameData.VVersion);
+                //gBox.gameButton
+            }
 
             //FirstSetupCheck();
-            StartGameBoxes();
+            //await GetGamesOnline(); //BU BİTMEDEN ALTA GEÇMİYO MÜKEMMEL (sanırım)
+            //StartGameBoxes();
 
         }
         private void FirstSetupCheck()
@@ -95,6 +102,7 @@ namespace GuzzLaunhcer
 
         }
 
+        /*
         private void CreateGameBox(string name, Point Location, Image image,string version)
         {
             GameBox gameBox = new GameBox(name, Location, image,version);
@@ -110,7 +118,83 @@ namespace GuzzLaunhcer
             //sMessageBox.Show(imageCount.ToString());
             gameBoxList.Add(gameBox);
         }
+        */
+        private GameBox CreateGameBox(string name, Point Location, Image image, string version)
+        {
+            GameBox gameBox = new GameBox(name, Location, image, version);
+            //GameBox gameBox = new GameBox("Ahmet Kaya Ball 2", new Point(12, 12), Properties.Resources.artworks_000013535097_9rz0uo_t500x500);
 
+            this.Controls.Add(gameBox.gamePictureBox);  // BU İKİSİ RENDERLANMASINI SAĞLIYOR
+            this.Controls.Add(gameBox.gameText);
+            gameBox.gameText.BringToFront();
+            this.Controls.Add(gameBox.gameButton);
+
+            imageCount++;
+            DefaultPoint = new Point(12 + ((imageCount * imageSize) + (imageSpace * imageCount)), 12);
+            //sMessageBox.Show(imageCount.ToString());
+            gameBoxList.Add(gameBox);
+            return gameBox;
+        }
+
+
+
+        public static async Task<List<GameBoxData>> GetGamesOnline()
+        {
+            string url = "https://raw.githubusercontent.com/oguzk234/GuzzLauncherOnlineDatas/refs/heads/main/GuzzGamesData2.txt";
+
+
+            List<GameBoxData> gameBoxDatas = new List<GameBoxData>();
+
+            Image image = null;
+            string name = null;
+            string version = null;
+            string downloadLink = null;
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                { 
+                    //ASENKRON OKUMAĞ
+                    string content = await client.GetStringAsync(url);
+                    MessageBox.Show(content);
+
+                    string[] games = content.Split('>');
+                    MessageBox.Show("OYUN SAYISI = "+games.Length.ToString());
+                    foreach(string game in games)
+                    {
+                        string[] parts = game.Split('>');
+
+                        name = parts[0];
+                        version = parts[1];
+                        downloadLink = parts[2];
+                        byte[] imageBytes = await client.GetByteArrayAsync(parts[3]);
+                        using (var ms = new MemoryStream(imageBytes))
+                        {
+                            image = Image.FromStream(ms);
+                        }
+                        gameBoxDatas.Add(new GameBoxData(image, name, version, downloadLink));
+                    }
+                    //string[] parts = content.Split('<');
+
+
+                    //MessageBox.Show(content + " = Content");  //Foreach ile hepsini doğrulayabilirsin
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("GetGamesOnline HATASI " + ex.Message);
+                }
+                finally
+                {
+
+                }
+            }
+
+            //return new GameBoxData(image, name, version, downloadLink);
+            //gameBoxDatas.Add(new GameBoxData(image, name, version, downloadLink));
+            return gameBoxDatas;
+
+        }
 
         public static async Task DownloadGame(string downloadPath,string gameFolderName, string url = "https://github.com/oguzk234/AhmetKayaBall_Beta_V0.23")
         { //GAME FOLDER NAME İLE GAME NAME AYNI OLMALI
@@ -148,11 +232,14 @@ public class GameBox
     public Point gameLocation;
     public Image gameImage;
 
+
     public PictureBox gamePictureBox;// KENDI OLUSTURULACAK
     public Label gameText;// KENDI OLUSTURULACAK
     public Button gameButton;
+
     public enum GameStatus { NotDownloaded,UpdateNeeded,ReadyToPlay }
     public GameStatus gameStatus = GameStatus.NotDownloaded;
+
 
     public GameBox(string GameName, Point GameLocation, Image GameImage , string Version)
     {
@@ -229,6 +316,7 @@ public class GameBox
     public void OnButtonClick(object sender, EventArgs e)
     {
         MessageBox.Show(sender.ToString());
+
     }
 
     public void CheckGameStatus()
@@ -276,6 +364,23 @@ public class GameBox
             File.WriteAllText(GameConfigPath, version);
         }
     }
+}
+
+
+public struct GameBoxData
+{
+    public GameBoxData(Image iimage,string nname,string vversion,string ddownloadLink)
+    {
+        IImage = iimage;
+        NName = nname;
+        VVersion = vversion;
+        DDownloadLink = ddownloadLink;
+    }
+
+    public Image IImage;
+    public string NName;
+    public string VVersion;
+    public string DDownloadLink;
 }
 
 
