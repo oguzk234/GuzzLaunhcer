@@ -45,13 +45,14 @@ namespace GuzzLaunhcer
             //MessageBox.Show(downloadDir);
             FirstSetupCheck();
 
-
+            
             //gameBoxDataList = await GetGamesOnline();
             foreach (GameBoxData gameData in await GetGamesOnline())
             {
                 GameBox gBox = CreateGameBox(gameData.NName, DefaultPoint, gameData.IImage, gameData.VVersion);
                 //gBox.gameButton
             }
+            
 
             //await GetGamesOnline(); //BU BİTMEDEN ALTA GEÇMİYO MÜKEMMEL (sanırım)
             //StartGameBoxes();
@@ -100,6 +101,7 @@ namespace GuzzLaunhcer
         {
             CreateGameBox("31", DefaultPoint, Properties.Resources.artworks_000013535097_9rz0uo_t500x500,"V0.1");
             CreateGameBox("32fgdfdgfdgfdgdf", DefaultPoint, Properties.Resources.artworks_000013535097_9rz0uo_t500x500,"V0.25");
+            CreateGameBox("33333", DefaultPoint, Properties.Resources.artworks_000013535097_9rz0uo_t500x500, "V0.28");
 
         }
 
@@ -142,7 +144,6 @@ namespace GuzzLaunhcer
         public static async Task<List<GameBoxData>> GetGamesOnline()
         {
             string url = "https://raw.githubusercontent.com/oguzk234/GuzzLauncherOnlineDatas/refs/heads/main/GuzzGamesData2.txt";
-
 
             List<GameBoxData> gameBoxDatas = new List<GameBoxData>();
 
