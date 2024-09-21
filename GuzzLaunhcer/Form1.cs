@@ -156,10 +156,10 @@ namespace GuzzLaunhcer
                 { 
                     //ASENKRON OKUMAĞ
                     string content = await client.GetStringAsync(url);
-                    MessageBox.Show(content);
+                    //MessageBox.Show(content);   //IMPO
 
                     string[] games = content.Split('>');
-                    MessageBox.Show("OYUN SAYISI = "+games.Length.ToString());
+                    //MessageBox.Show("OYUN SAYISI = "+games.Length.ToString());   //IMPO
                     foreach(string game in games)
                     {
                         string[] parts = game.Split('<');
@@ -322,12 +322,12 @@ public class GameBox
     public void CheckGameStatus()
     {
         string GamePath = Path.Combine(GuzzLaunhcer.GuzzLauncher.downloadDir, this.gameName);
-        //MessageBox.Show(GamePath);
+        //MessageBox.Show(GamePath);  //IMPO
         string GameConfigPath = Path.Combine(GamePath, "GuzzLauncherConfig.txt");
         //MessageBox.Show(GameConfigPath);
         if (Directory.Exists(GamePath) == false)
         {
-            MessageBox.Show(this.gameName + " OYUNU KLASÖRÜ BULUNAMADI");
+            //MessageBox.Show(this.gameName + " OYUNU KLASÖRÜ BULUNAMADI");  //BU DA IMPO
             //MessageBox.Show(this.gameName + " GameDirectorysi OLUŞTURULDU");
             //Directory.CreateDirectory(GamePath);
             //File.WriteAllText(GameConfigPath,version);
@@ -339,7 +339,7 @@ public class GameBox
         }
         else if(File.Exists(GameConfigPath))
         {
-            MessageBox.Show(this.gameName + " GameDirectorysi BULUNDU");
+            //MessageBox.Show(this.gameName + " GameDirectorysi BULUNDU");   //BURALAR IMPO
 
             string[] GameConfigLines = File.ReadAllLines(GameConfigPath);
             if(GameConfigLines[0] != version)
