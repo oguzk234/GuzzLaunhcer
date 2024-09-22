@@ -464,8 +464,6 @@ public class GameBox
 
                 }
 
-                await GuzzLaunhcer.GuzzLauncher.DownloadGame(this.gameName, DownloadLink);
-
 
                 break;
         }
