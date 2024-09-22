@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Net;
 using System.IO;
 using System.Net.Http;
+using System.IO.Compression;
 
 namespace GuzzLaunhcer
 {
@@ -39,7 +40,9 @@ namespace GuzzLaunhcer
         private async void GuzzLauncher_Load(object sender, EventArgs e)
         {
             appDir = AppDomain.CurrentDomain.BaseDirectory;
-            configFileDir = System.IO.Path.Combine(appDir, "config.txt");
+            //configFileDir = System.IO.Path.Combine(appDir, "config.txt");
+            //configFileDir = "C:\\GuzzLauncher";
+
             //downloadDir = File.ReadLines(configFileDir).First(); // FIRST SETUP CHECK DE KONTROL EDILIYOR
 
             //MessageBox.Show(downloadDir);
@@ -63,7 +66,7 @@ namespace GuzzLaunhcer
             if (System.IO.File.Exists(configFileDir))
             {
                 downloadDir = System.IO.File.ReadLines(configFileDir).First();
-                //MessageBox.Show(downloadDir);
+                MessageBox.Show(downloadDir);
             }
             else
             {
@@ -200,19 +203,34 @@ namespace GuzzLaunhcer
 
         public static async Task DownloadGame(string gameFolderName, string url = "https://github.com/oguzk234/AhmetKayaBall_Beta_V0.23")
         { //GAME FOLDER NAME İLE GAME NAME AYNI OLMALI
+            MessageBox.Show("indirilen URL = "+url);
+            string gameRarFile = Path.Combine(downloadDir, gameFolderName + ".rar");
+
             using (HttpClient client = new HttpClient())
             {
                 try
                 {
+                    
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
 
-                    using (FileStream fs = new FileStream(Path.Combine(downloadDir,gameFolderName), FileMode.Create, FileAccess.Write, FileShare.None))
+                    using (FileStream fs = new FileStream(gameRarFile, FileMode.Create, FileAccess.Write, FileShare.None))
                     {
                         await response.Content.CopyToAsync(fs);
+                        
                     }
+                    
 
-                    MessageBox.Show("INDIRME OLUMLU");
+                    MessageBox.Show("RAR INDIRME OLUMLU");
+                    MessageBox.Show(gameRarFile + "  " + downloadDir);
+
+                    ZipFile.ExtractToDirectory(gameRarFile,downloadDir);
+                    File.Delete(gameRarFile);
+
+                    GameBox downloadedGame = FindGameFromName(gameFolderName);
+                    downloadedGame.CheckGameStatus();
+                    downloadedGame.CheckButtonStatus();
+
                 }
                 catch (Exception ex)
                 {
@@ -222,8 +240,26 @@ namespace GuzzLaunhcer
         }
 
 
+
+
+        public static GameBox FindGameFromName(string gameName)
+        {
+            foreach (GameBox gBox in gameBoxList)
+            {
+                if (gameName == gBox.gameName)
+                {
+                    return gBox;
+                }
+            }
+            return null;
+        }
+
+
+
     }
 }
+
+
 
 
 public class GameBox
@@ -242,7 +278,7 @@ public class GameBox
     public enum GameStatus { NotDownloaded,UpdateNeeded,ReadyToPlay }
     public GameStatus gameStatus = GameStatus.NotDownloaded;
 
-    public string downloadLink;
+    public string DownloadLink;
 
     public GameBox(string GameName, Point GameLocation, Image GameImage , string Version , string downloadlink)
     {
@@ -252,6 +288,7 @@ public class GameBox
         gameText = new Label();
         gamePictureBox = new PictureBox();
         gameButton = new Button();
+        DownloadLink = downloadlink;
 
 
         #region PictureBoxValues
@@ -291,21 +328,8 @@ public class GameBox
         #region ButtonValues
         this.gameButton.Location = new Point(gameLocation.X, gameLocation.Y + GuzzLaunhcer.GuzzLauncher.imageSize + 44);
         this.gameButton.Size = new Size(GuzzLaunhcer.GuzzLauncher.imageSize, 32);
-        switch (gameStatus)
-        {
-            case GameStatus.NotDownloaded:
-                this.gameButton.Text = "Download";
-                this.gameButton.ForeColor = Color.Red;
-                break;
-            case GameStatus.ReadyToPlay:
-                this.gameButton.Text = "Play";
-                this.gameButton.ForeColor = Color.Green;
-                break;
-            case GameStatus.UpdateNeeded:
-                this.gameButton.Text = "Update";
-                this.gameButton.ForeColor = Color.Orange;
-                break;
-        }
+
+        CheckButtonStatus();
 
         //DEFAULT VALUES
         this.gameButton.Name = this.gameName + "Button";
@@ -318,15 +342,16 @@ public class GameBox
 
     public async void OnButtonClick(object sender, EventArgs e)
     {
-        MessageBox.Show(sender.ToString() + " /// " + this.gameName);
+        //MessageBox.Show(sender.ToString() + " /// " + this.gameName);
+        string GamePath = Path.Combine(GuzzLaunhcer.GuzzLauncher.downloadDir, this.gameName);
 
         switch (gameStatus)
         {
             case GameStatus.NotDownloaded:
 
-                MessageBox.Show("Indirme Basladi");
-                await GuzzLaunhcer.GuzzLauncher.DownloadGame(this.gameName, downloadLink);
-                MessageBox.Show("Indirme Tamamlandi");
+                //MessageBox.Show("Indirme Basladi = " + this.DownloadLink);
+                await GuzzLaunhcer.GuzzLauncher.DownloadGame(this.gameName, DownloadLink);
+                //MessageBox.Show("Indirme Tamamlandi");
 
                 break;
 
@@ -338,6 +363,7 @@ public class GameBox
                     // Yeni bir işlem (process) başlat
                     Process process = new Process();
                     process.StartInfo.FileName = Path.Combine(GuzzLaunhcer.GuzzLauncher.downloadDir, gameName, gameName + ".exe");
+
 
                     process.Start();
 
@@ -353,7 +379,32 @@ public class GameBox
 
 
             case GameStatus.UpdateNeeded:
+                if (Directory.Exists(GamePath))
+                {
+                    Directory.Delete(GamePath, true);
+                }
+                await GuzzLaunhcer.GuzzLauncher.DownloadGame(this.gameName, DownloadLink);
 
+
+                break;
+        }
+    }
+
+    public void CheckButtonStatus()
+    {
+        switch (gameStatus)
+        {
+            case GameStatus.NotDownloaded:
+                this.gameButton.Text = "Download";
+                this.gameButton.ForeColor = Color.Red;
+                break;
+            case GameStatus.ReadyToPlay:
+                this.gameButton.Text = "Play";
+                this.gameButton.ForeColor = Color.Green;
+                break;
+            case GameStatus.UpdateNeeded:
+                this.gameButton.Text = "Update";
+                this.gameButton.ForeColor = Color.Orange;
                 break;
         }
     }
@@ -361,6 +412,7 @@ public class GameBox
     public void CheckGameStatus()
     {
         string GamePath = Path.Combine(GuzzLaunhcer.GuzzLauncher.downloadDir, this.gameName);
+        //string GameExePath = Path.Combine(GamePath, gameName + ".exe");
         //MessageBox.Show(GamePath);  //IMPO
         string GameConfigPath = Path.Combine(GamePath, "GuzzLauncherConfig.txt");
         //MessageBox.Show(GameConfigPath);
@@ -385,6 +437,7 @@ public class GameBox
             {
                 MessageBox.Show(gameName + " adlı oyunda sürüm uyuşmazlığı, Yeni = " + version + " Eski = " + GameConfigLines[0]);
                 this.gameStatus = GameStatus.UpdateNeeded;
+
             }
             else if (GameConfigLines[0] == version)
             {
@@ -401,6 +454,7 @@ public class GameBox
         { 
             MessageBox.Show("ANA KLASÖR VAR AMA CONFIGI YOK O YUZDEN CONFIG OLUSTURULUYOR + " + gameName);
             File.WriteAllText(GameConfigPath, version);
+            this.CheckGameStatus();
         }
     }
 }
