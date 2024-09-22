@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "AB85wJ27rdPWGBQEvmV1GakngN3pk3Lbd5BoZkV2AJoyewvqL5TeUjjoJJE6N8bALafmfUNHxoJFaQOLQspszw==",
+  "dgSpecHash": "OTDJr+T1j7KM/XMaWYYQUSvyrqUG62kcPipanjqj9McovEGIvqQdg+qHMZ1N1bNFMhsVwN/p9FgcIV/vSdAV1g==",
   "success": true,
   "projectFilePath": "C:\\Users\\pc\\source\\repos\\GuzzLaunhcer\\GuzzLaunhcer\\GuzzLaunhcer.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\pc\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\3.1.32\\microsoft.netcore.app.runtime.win-x64.3.1.32.nupkg.sha512",
+    "C:\\Users\\pc\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\3.1.32\\microsoft.windowsdesktop.app.runtime.win-x64.3.1.32.nupkg.sha512",
+    "C:\\Users\\pc\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\3.1.32\\microsoft.aspnetcore.app.runtime.win-x64.3.1.32.nupkg.sha512"
+  ],
   "logs": []
 }

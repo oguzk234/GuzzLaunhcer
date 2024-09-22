@@ -1,0 +1,16 @@
+C:\Users\pc\source\repos\GuzzLaunhcer\GuzzLaunhcer\bin\Release\netcoreapp3.1\GuzzLaunhcer.exe
+C:\Users\pc\source\repos\GuzzLaunhcer\GuzzLaunhcer\bin\Release\netcoreapp3.1\GuzzLaunhcer.deps.json
+C:\Users\pc\source\repos\GuzzLaunhcer\GuzzLaunhcer\bin\Release\netcoreapp3.1\GuzzLaunhcer.runtimeconfig.json
+C:\Users\pc\source\repos\GuzzLaunhcer\GuzzLaunhcer\bin\Release\netcoreapp3.1\GuzzLaunhcer.runtimeconfig.dev.json
+C:\Users\pc\source\repos\GuzzLaunhcer\GuzzLaunhcer\bin\Release\netcoreapp3.1\GuzzLaunhcer.dll
+C:\Users\pc\source\repos\GuzzLaunhcer\GuzzLaunhcer\bin\Release\netcoreapp3.1\GuzzLaunhcer.pdb
+C:\Users\pc\source\repos\GuzzLaunhcer\GuzzLaunhcer\obj\Release\netcoreapp3.1\GuzzLaunhcer.csproj.AssemblyReference.cache
+C:\Users\pc\source\repos\GuzzLaunhcer\GuzzLaunhcer\obj\Release\netcoreapp3.1\GuzzLaunhcer.GuzzLauncher.resources
+C:\Users\pc\source\repos\GuzzLaunhcer\GuzzLaunhcer\obj\Release\netcoreapp3.1\GuzzLaunhcer.Properties.Resources.resources
+C:\Users\pc\source\repos\GuzzLaunhcer\GuzzLaunhcer\obj\Release\netcoreapp3.1\GuzzLaunhcer.csproj.GenerateResource.cache
+C:\Users\pc\source\repos\GuzzLaunhcer\GuzzLaunhcer\obj\Release\netcoreapp3.1\GuzzLaunhcer.AssemblyInfoInputs.cache
+C:\Users\pc\source\repos\GuzzLaunhcer\GuzzLaunhcer\obj\Release\netcoreapp3.1\GuzzLaunhcer.AssemblyInfo.cs
+C:\Users\pc\source\repos\GuzzLaunhcer\GuzzLaunhcer\obj\Release\netcoreapp3.1\GuzzLaunhcer.csproj.CoreCompileInputs.cache
+C:\Users\pc\source\repos\GuzzLaunhcer\GuzzLaunhcer\obj\Release\netcoreapp3.1\GuzzLaunhcer.dll
+C:\Users\pc\source\repos\GuzzLaunhcer\GuzzLaunhcer\obj\Release\netcoreapp3.1\GuzzLaunhcer.pdb
+C:\Users\pc\source\repos\GuzzLaunhcer\GuzzLaunhcer\obj\Release\netcoreapp3.1\GuzzLaunhcer.genruntimeconfig.cache
