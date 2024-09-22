@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.Net;
 using System.IO;
 using System.Net.Http;
 using System.IO.Compression;
-using System.Runtime.InteropServices;
 
 namespace GuzzLaunhcer
 {
@@ -638,38 +633,6 @@ public struct GameBoxData
     public string VVersion;
     public string DDownloadLink;
 }
-
-
-
-
-
-
-
-//INITILIZE EXAMPLED DEF
-/*
-private void InitializeGameBox(GameBox gameBox)
-{
-    gameBox.gameImage.Image = global::GuzzLaunhcer.Properties.Resources.artworks_000013535097_9rz0uo_t500x500;
-    gameBox.gameImage.Location = new System.Drawing.Point(12, 12);
-    gameBox.gameImage.Name = "pictureBox1";
-    gameBox.gameImage.Size = new System.Drawing.Size(128, 128);
-    gameBox.gameImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-    gameBox.gameImage.TabIndex = 1;
-    gameBox.gameImage.TabStop = false;
-    gameBox.gameImage.Click += new System.EventHandler(this.pictureBox1_Click);
-
-
-
-
-
-}
-*/
-
-
-
-
-
-
 
 
 
