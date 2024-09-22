@@ -61,6 +61,7 @@ namespace GuzzLaunhcer
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(942, 533);
             this.label1.Name = "label1";
@@ -79,6 +80,7 @@ namespace GuzzLaunhcer
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Name = "GuzzLauncher";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "GuzzLauncher";
             this.Load += new System.EventHandler(this.GuzzLauncher_Load);
             this.ResumeLayout(false);

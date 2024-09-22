@@ -37,6 +37,7 @@ namespace GuzzLaunhcer
         public GuzzLauncher()
         {
             InitializeComponent();
+            this.MinimumSize = new Size(762, 462);
         }
 
         private async void GuzzLauncher_Load(object sender, EventArgs e)
@@ -75,7 +76,7 @@ namespace GuzzLaunhcer
             }
             else
             {
-                MessageBox.Show("Please select a download path");
+                MessageBox.Show("Please select a download path", caption: "First Installation", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Information);
                 button1_Click(new object(), new EventArgs());
             }
         }
@@ -179,6 +180,7 @@ namespace GuzzLaunhcer
         public static async Task<List<GameBoxData>> GetGamesOnline()
         {
             string url = "https://raw.githubusercontent.com/oguzk234/GuzzLauncherOnlineDatas/refs/heads/main/GuzzGamesData2.txt";
+            string messageUrl = "https://raw.githubusercontent.com/oguzk234/GuzzLauncherOnlineDatas/refs/heads/main/Message.txt";
 
             List<GameBoxData> gameBoxDatas = new List<GameBoxData>();
 
@@ -190,8 +192,14 @@ namespace GuzzLaunhcer
             using (HttpClient client = new HttpClient())
             {
                 try
-                { 
+                {
                     //ASENKRON OKUMAĞ
+                    string messageContent = await client.GetStringAsync(messageUrl);
+                    MessageBox.Show(messageContent, caption: "What`s New?", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Information);
+
+
+
+
                     string content = await client.GetStringAsync(url);
                     //MessageBox.Show(content);   //IMPO
 
@@ -281,8 +289,8 @@ namespace GuzzLaunhcer
                     */
 
 
-                    MessageBox.Show("RAR INDIRME OLUMLU");
-                    MessageBox.Show(gameRarFile + "  " + downloadDir);
+                    //MessageBox.Show("RAR INDIRME OLUMLU");
+                    //MessageBox.Show(gameRarFile + "  " + downloadDir);
 
                     ZipFile.ExtractToDirectory(gameRarFile,downloadDir);
                     File.Delete(gameRarFile);
@@ -291,10 +299,11 @@ namespace GuzzLaunhcer
                     downloadedGame.CheckGameStatus();
                     downloadedGame.CheckButtonStatus();
 
+                    MessageBox.Show(downloadedGame.gameName + " Downloaded Successfully", caption: "Download", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"INDIRMEDE Hata oluştu: {ex.Message}");
+                    MessageBox.Show($"ERROR {ex.Message}", caption: "DOWNLOAD ERROR", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Error);
                     downloadedGame.isDownloading = false;
                 }
                 finally
@@ -328,7 +337,7 @@ namespace GuzzLaunhcer
 
         private void label1_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Changing the game directory will delete all the games!");
+            MessageBox.Show("Changing the game directory will delete all the games!", caption: "Be Careful!", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Warning);
         }
     }
 }
@@ -452,7 +461,7 @@ public class GameBox
                 }
                 else
                 {
-                    MessageBox.Show("Already Downloading " + this.gameName);
+                    MessageBox.Show("Already Downloading " + this.gameName, caption: "Download", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Warning);
                 }
 
 
@@ -552,7 +561,7 @@ public class GameBox
             string[] GameConfigLines = File.ReadAllLines(GameConfigPath);
             if(GameConfigLines[0] != version)
             {
-                MessageBox.Show(gameName + " adlı oyunda sürüm uyuşmazlığı, Yeni = " + version + " Eski = " + GameConfigLines[0]);
+                MessageBox.Show("Luckily, we have an update for " + gameName + " New version = " + version + " Old version = " + GameConfigLines[0], caption: "We have an update!", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Information);
                 this.gameStatus = GameStatus.UpdateNeeded;
 
             }
@@ -563,13 +572,13 @@ public class GameBox
             }
             else
             {
-                MessageBox.Show("Bİ BOKLAR VAR");
+                MessageBox.Show("BI BOKLAR VAR");
             }
 
         }
         else
         { 
-            MessageBox.Show("ANA KLASÖR VAR AMA CONFIGI YOK O YUZDEN CONFIG OLUSTURULUYOR + " + gameName);
+            //MessageBox.Show("ANA KLASÖR VAR AMA CONFIGI YOK O YUZDEN CONFIG OLUSTURULUYOR + " + gameName);
             File.WriteAllText(GameConfigPath, version);
             this.CheckGameStatus();
         }
