@@ -139,6 +139,7 @@ namespace GuzzLaunhcer
             this.Controls.Add(gameBox.gameText);
             gameBox.gameText.BringToFront();
             this.Controls.Add(gameBox.gameButton);
+            this.Controls.Add(gameBox.progressBar);
 
             imageCount++;
             DefaultPoint = new Point(12 + ((imageCount * imageSize) + (imageSpace * imageCount)), 12);
@@ -209,24 +210,50 @@ namespace GuzzLaunhcer
         public static async Task DownloadGame(string gameFolderName, string url = "https://github.com/oguzk234/AhmetKayaBall_Beta_V0.23")
         { //GAME FOLDER NAME İLE GAME NAME AYNI OLMALI
             MessageBox.Show("indirilen URL = "+url);
-            string gameRarFile = Path.Combine(downloadDir, gameFolderName + ".rar");
+            string gameRarFile = Path.Combine(downloadDir, gameFolderName + ".zip");
+
+            GameBox downloadedGame = FindGameFromName(gameFolderName);
 
             using (HttpClient client = new HttpClient())
             {
                 try
                 {
-                    
-                    HttpResponseMessage response = await client.GetAsync(url);
+                    downloadedGame.isDownloading = true;
+
+                    var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
                     response.EnsureSuccessStatusCode();
 
-                    var contentLength = response.Content.Headers.ContentLength;
+                    long totalBytes = (int)response.Content.Headers.ContentLength;
 
+
+                    using (var responseStream = await client.GetStreamAsync(url))
+                    using (var fileStream = new FileStream(gameRarFile, FileMode.Create, FileAccess.Write, FileShare.None))
+                    {
+                        byte[] buffer = new byte[8192]; // 8 KB'lik veri parçaları indirilecek
+                        long totalRead = 0;
+                        int bytesRead;
+
+                        while ((bytesRead = await responseStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                        {
+                            fileStream.Write(buffer, 0, bytesRead);
+                            totalRead += bytesRead;
+
+                            // İlerleme çubuğunu güncelle
+                            int progressPercentage = (int)((totalRead * 100) / totalBytes);
+                            downloadedGame.progressBar.Value = progressPercentage;
+
+                        }
+
+                    }
+
+
+                    /* OLD
                     using (FileStream fs = new FileStream(gameRarFile, FileMode.Create, FileAccess.Write, FileShare.None))
                     {
                         await response.Content.CopyToAsync(fs);
-                        
                     }
-                    
+                    */
+
 
                     MessageBox.Show("RAR INDIRME OLUMLU");
                     MessageBox.Show(gameRarFile + "  " + downloadDir);
@@ -234,7 +261,6 @@ namespace GuzzLaunhcer
                     ZipFile.ExtractToDirectory(gameRarFile,downloadDir);
                     File.Delete(gameRarFile);
 
-                    GameBox downloadedGame = FindGameFromName(gameFolderName);
                     downloadedGame.isDownloading = false;
                     downloadedGame.CheckGameStatus();
                     downloadedGame.CheckButtonStatus();
@@ -243,6 +269,11 @@ namespace GuzzLaunhcer
                 catch (Exception ex)
                 {
                     MessageBox.Show($"INDIRMEDE Hata oluştu: {ex.Message}");
+                    downloadedGame.isDownloading = false;
+                }
+                finally
+                {
+                    downloadedGame.isDownloading = false;
                 }
             }
         }
@@ -282,6 +313,7 @@ public class GameBox
     public PictureBox gamePictureBox;// KENDI OLUSTURULACAK
     public Label gameText;// KENDI OLUSTURULACAK
     public Button gameButton;
+    public ProgressBar progressBar;
 
     public enum GameStatus { NotDownloaded,UpdateNeeded,ReadyToPlay }
     public GameStatus gameStatus = GameStatus.NotDownloaded;
@@ -299,6 +331,9 @@ public class GameBox
         gamePictureBox = new PictureBox();
         gameButton = new Button();
         DownloadLink = downloadlink;
+        progressBar = new ProgressBar();
+
+
 
 
         #region PictureBoxValues
@@ -348,6 +383,17 @@ public class GameBox
         this.gameButton.Click += new System.EventHandler(this.OnButtonClick);
         //DEFAULT VALUES
         #endregion
+
+
+
+
+
+        #region ProgressBarValues
+        this.progressBar.Location = new Point(gameButton.Location.X, gameButton.Location.Y + 34);
+        this.progressBar.Size = new Size(GuzzLaunhcer.GuzzLauncher.imageSize, 18);
+        #endregion
+
+
     }
 
     public async void OnButtonClick(object sender, EventArgs e)
@@ -432,14 +478,17 @@ public class GameBox
             case GameStatus.NotDownloaded:
                 this.gameButton.Text = "Download";
                 this.gameButton.ForeColor = Color.Red;
+                this.progressBar.Value = 0;
                 break;
             case GameStatus.ReadyToPlay:
                 this.gameButton.Text = "Play";
                 this.gameButton.ForeColor = Color.Green;
+                this.progressBar.Value = 100;
                 break;
             case GameStatus.UpdateNeeded:
                 this.gameButton.Text = "Update";
                 this.gameButton.ForeColor = Color.Orange;
+                this.progressBar.Value = 50;
                 break;
         }
     }
@@ -535,4 +584,57 @@ private void InitializeGameBox(GameBox gameBox)
 
 
 }
+*/
+
+
+
+
+
+
+
+
+
+/*
+using (HttpClient client = new HttpClient())
+{
+    try
+    {
+        downloadedGame.isDownloading = true;
+
+        HttpResponseMessage response = await client.GetAsync(url);
+        response.EnsureSuccessStatusCode();
+        var contentLength = response.Content.Headers.ContentLength;
+
+
+
+
+        using (var stream = await response.Content.ReadAsStreamAsync())
+        {
+            using (FileStream fs = new FileStream(gameRarFile, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                //await response.Content.CopyToAsync(fs);
+                byte[] buffer = new byte[8192];
+                long totalBytesRead = 0;
+                int bytesRead;
+
+                while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                {
+                    await fs.WriteAsync(buffer, 0, bytesRead);
+                    totalBytesRead += bytesRead;
+
+                    if (contentLength.HasValue)
+                    {
+                        double progressPercentage = (double)totalBytesRead / contentLength.Value * 100;
+
+                        downloadedGame.progressBar.Value = (int)progressPercentage;
+                        //MessageBox.Show("indirme");
+
+                    }
+
+                }
+
+            }
+
+
+        }
 */
