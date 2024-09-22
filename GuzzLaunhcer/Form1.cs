@@ -325,6 +325,11 @@ namespace GuzzLaunhcer
             processStartInfo.FileName = downloadDir;
             Process.Start(processStartInfo);
         }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Changing the game directory will delete all the games!");
+        }
     }
 }
 

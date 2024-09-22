@@ -32,6 +32,7 @@ namespace GuzzLaunhcer
         {
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // button1
@@ -58,18 +59,30 @@ namespace GuzzLaunhcer
             this.button2.UseVisualStyleBackColor = false;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(942, 533);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(114, 15);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "( Use This Carefully )";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
+            // 
             // GuzzLauncher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Plum;
             this.ClientSize = new System.Drawing.Size(1084, 611);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Name = "GuzzLauncher";
             this.Text = "GuzzLauncher";
             this.Load += new System.EventHandler(this.GuzzLauncher_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -78,6 +91,7 @@ namespace GuzzLaunhcer
 
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Label label1;
 
 
 
