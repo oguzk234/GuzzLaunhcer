@@ -32,6 +32,8 @@ namespace GuzzLaunhcer
         public static Point DefaultPoint = new Point(12, 12);
         //
 
+        public static IntPtr intPtr;
+
         //public static List<GameBoxData> gameBoxDataList = new List<GameBoxData>();
 
 
@@ -39,6 +41,7 @@ namespace GuzzLaunhcer
         {
             InitializeComponent();
             this.MinimumSize = new Size(1100, 650);
+            intPtr = this.Handle;
         }
 
         private async void GuzzLauncher_Load(object sender, EventArgs e)
@@ -258,6 +261,8 @@ namespace GuzzLaunhcer
                     var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
                     response.EnsureSuccessStatusCode();
 
+                    IllegalWindowController.DisableCloseButton(intPtr);
+
                     long totalBytes = (int)response.Content.Headers.ContentLength;
 
 
@@ -306,11 +311,14 @@ namespace GuzzLaunhcer
                 {
                     MessageBox.Show($"ERROR {ex.Message}", caption: "DOWNLOAD ERROR", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Error);
                     downloadedGame.isDownloading = false;
+                    IllegalWindowController.EnableCloseButton(intPtr); //KALDIRILABİLİR
                 }
                 finally
                 {
                     downloadedGame.isDownloading = false;
+                    IllegalWindowController.EnableCloseButton(intPtr);
                 }
+
 
             }
 
@@ -345,6 +353,27 @@ namespace GuzzLaunhcer
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Are you sure about deleting all games?","Be Careful!",MessageBoxButtons.YesNo,MessageBoxIcon.Warning);
+            if (result == DialogResult.Yes)
+            {
+                foreach (GameBox game in gameBoxList)
+                {
+                    if (Directory.Exists(Path.Combine(downloadDir, game.gameName)))
+                    {
+                        Directory.Delete(Path.Combine(downloadDir, game.gameName), true);
+                        ResetAllGameBoxes();
+                    }
+                }
+            }
+            else if (result == DialogResult.No)
+            {
+
+            }
 
         }
     }
