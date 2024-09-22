@@ -71,7 +71,7 @@ namespace GuzzLaunhcer
             if (System.IO.File.Exists(configFileDir))
             {
                 downloadDir = System.IO.File.ReadLines(configFileDir).First();
-                MessageBox.Show(downloadDir);
+                //MessageBox.Show(downloadDir);
             }
             else
             {
@@ -80,21 +80,47 @@ namespace GuzzLaunhcer
             }
         }
 
+        private void ResetAllGameBoxes()
+        {
+            foreach(GameBox gameBox in gameBoxList)
+            {
+                gameBox.CheckGameStatus();
+                gameBox.CheckButtonStatus();
+            }
+        }
+
 
         private void button1_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog() { Description = "Select Download Path", RootFolder = Environment.SpecialFolder.Programs };
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog() { Description = "Select Download Path", RootFolder = Environment.SpecialFolder.Desktop };
 
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
+                string oldDownloadDir = null;
+                if (downloadDir != null) { oldDownloadDir = downloadDir; }
                 downloadDir = folderBrowserDialog.SelectedPath;
 
                 System.IO.File.WriteAllText(configFileDir, downloadDir);
+
+                foreach(GameBox game in gameBoxList)
+                {
+                    if (Directory.Exists(Path.Combine(oldDownloadDir, game.gameName)))
+                    {
+                        Directory.Delete(Path.Combine(oldDownloadDir, game.gameName),true);
+                        ResetAllGameBoxes();
+                    }
+                }
                 //MessageBox.Show("Seçilen Klasör: " + folderBrowserDialog.SelectedPath + " ConfigFile dir =  " + configFileDir);
-                Clipboard.SetText(configFileDir);
+
+                //Clipboard.SetText(configFileDir);
 
 
                 //Process.Start(new ProcessStartInfo(configFileDir) { UseShellExecute = true });
+            }
+            else
+            {
+                Application.Exit();
+                //button1_Click(new object(), new EventArgs());
             }
         }
 
@@ -209,7 +235,7 @@ namespace GuzzLaunhcer
 
         public static async Task DownloadGame(string gameFolderName, string url = "https://github.com/oguzk234/AhmetKayaBall_Beta_V0.23")
         { //GAME FOLDER NAME İLE GAME NAME AYNI OLMALI
-            MessageBox.Show("indirilen URL = "+url);
+            //MessageBox.Show("indirilen URL = "+url);
             string gameRarFile = Path.Combine(downloadDir, gameFolderName + ".zip");
 
             GameBox downloadedGame = FindGameFromName(gameFolderName);
@@ -293,8 +319,12 @@ namespace GuzzLaunhcer
             return null;
         }
 
-
-
+        private void button2_Click(object sender, EventArgs e)
+        {
+            ProcessStartInfo processStartInfo = new ProcessStartInfo() { UseShellExecute = true };
+            processStartInfo.FileName = downloadDir;
+            Process.Start(processStartInfo);
+        }
     }
 }
 
@@ -364,7 +394,7 @@ public class GameBox
         this.gameText.TabIndex = 5;
         this.gameText.Name = this.gameName + "Label";
         this.gameText.TextAlign = ContentAlignment.MiddleCenter;
-        this.gameText.BorderStyle = BorderStyle.Fixed3D;
+        this.gameText.BorderStyle = BorderStyle.FixedSingle;
         //DEFAULT VALUES
         #endregion
 
