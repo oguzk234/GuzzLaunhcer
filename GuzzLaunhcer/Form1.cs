@@ -49,7 +49,7 @@ namespace GuzzLaunhcer
             //gameBoxDataList = await GetGamesOnline();
             foreach (GameBoxData gameData in await GetGamesOnline())
             {
-                GameBox gBox = CreateGameBox(gameData.NName, DefaultPoint, gameData.IImage, gameData.VVersion);
+                GameBox gBox = CreateGameBox(gameData.NName, DefaultPoint, gameData.IImage, gameData.VVersion , gameData.DDownloadLink);
                 //gBox.gameButton
             }
             
@@ -99,9 +99,9 @@ namespace GuzzLaunhcer
 
         private void StartGameBoxes()
         {
-            CreateGameBox("31", DefaultPoint, Properties.Resources.artworks_000013535097_9rz0uo_t500x500,"V0.1");
-            CreateGameBox("32fgdfdgfdgfdgdf", DefaultPoint, Properties.Resources.artworks_000013535097_9rz0uo_t500x500,"V0.25");
-            CreateGameBox("33333", DefaultPoint, Properties.Resources.artworks_000013535097_9rz0uo_t500x500, "V0.28");
+            CreateGameBox("31", DefaultPoint, Properties.Resources.artworks_000013535097_9rz0uo_t500x500,"V0.1","nul");
+            CreateGameBox("32fgdfdgfdgfdgdf", DefaultPoint, Properties.Resources.artworks_000013535097_9rz0uo_t500x500,"V0.25","nul");
+            CreateGameBox("33333", DefaultPoint, Properties.Resources.artworks_000013535097_9rz0uo_t500x500, "V0.28","nul");
 
         }
 
@@ -122,9 +122,9 @@ namespace GuzzLaunhcer
             gameBoxList.Add(gameBox);
         }
         */
-        private GameBox CreateGameBox(string name, Point Location, Image image, string version)
+        private GameBox CreateGameBox(string name, Point Location, Image image, string version , string downloadlink)
         {
-            GameBox gameBox = new GameBox(name, Location, image, version);
+            GameBox gameBox = new GameBox(name, Location, image, version , downloadlink);
             //GameBox gameBox = new GameBox("Ahmet Kaya Ball 2", new Point(12, 12), Properties.Resources.artworks_000013535097_9rz0uo_t500x500);
 
             this.Controls.Add(gameBox.gamePictureBox);  // BU İKİSİ RENDERLANMASINI SAĞLIYOR
@@ -198,7 +198,7 @@ namespace GuzzLaunhcer
 
         }
 
-        public static async Task DownloadGame(string downloadPath,string gameFolderName, string url = "https://github.com/oguzk234/AhmetKayaBall_Beta_V0.23")
+        public static async Task DownloadGame(string gameFolderName, string url = "https://github.com/oguzk234/AhmetKayaBall_Beta_V0.23")
         { //GAME FOLDER NAME İLE GAME NAME AYNI OLMALI
             using (HttpClient client = new HttpClient())
             {
@@ -207,7 +207,7 @@ namespace GuzzLaunhcer
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
 
-                    using (FileStream fs = new FileStream(Path.Combine(downloadPath,gameFolderName), FileMode.Create, FileAccess.Write, FileShare.None))
+                    using (FileStream fs = new FileStream(Path.Combine(downloadDir,gameFolderName), FileMode.Create, FileAccess.Write, FileShare.None))
                     {
                         await response.Content.CopyToAsync(fs);
                     }
@@ -242,8 +242,9 @@ public class GameBox
     public enum GameStatus { NotDownloaded,UpdateNeeded,ReadyToPlay }
     public GameStatus gameStatus = GameStatus.NotDownloaded;
 
+    public string downloadLink;
 
-    public GameBox(string GameName, Point GameLocation, Image GameImage , string Version)
+    public GameBox(string GameName, Point GameLocation, Image GameImage , string Version , string downloadlink)
     {
         version = Version;
         gameName = GameName; gameLocation = GameLocation; gameImage = GameImage;
@@ -315,10 +316,46 @@ public class GameBox
         #endregion
     }
 
-    public void OnButtonClick(object sender, EventArgs e)
+    public async void OnButtonClick(object sender, EventArgs e)
     {
-        MessageBox.Show(sender.ToString());
+        MessageBox.Show(sender.ToString() + " /// " + this.gameName);
 
+        switch (gameStatus)
+        {
+            case GameStatus.NotDownloaded:
+
+                MessageBox.Show("Indirme Basladi");
+                await GuzzLaunhcer.GuzzLauncher.DownloadGame(this.gameName, downloadLink);
+                MessageBox.Show("Indirme Tamamlandi");
+
+                break;
+
+
+            case GameStatus.ReadyToPlay:
+
+                try
+                {
+                    // Yeni bir işlem (process) başlat
+                    Process process = new Process();
+                    process.StartInfo.FileName = Path.Combine(GuzzLaunhcer.GuzzLauncher.downloadDir, gameName, gameName + ".exe");
+
+                    process.Start();
+
+                    //process.WaitForExit();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Hata: {ex.Message}");
+                }
+
+
+                break;
+
+
+            case GameStatus.UpdateNeeded:
+
+                break;
+        }
     }
 
     public void CheckGameStatus()
