@@ -12,6 +12,7 @@ using System.Net;
 using System.IO;
 using System.Net.Http;
 using System.IO.Compression;
+using System.Runtime.InteropServices;
 
 namespace GuzzLaunhcer
 {
@@ -37,7 +38,7 @@ namespace GuzzLaunhcer
         public GuzzLauncher()
         {
             InitializeComponent();
-            this.MinimumSize = new Size(762, 462);
+            this.MinimumSize = new Size(1100, 650);
         }
 
         private async void GuzzLauncher_Load(object sender, EventArgs e)
@@ -310,7 +311,9 @@ namespace GuzzLaunhcer
                 {
                     downloadedGame.isDownloading = false;
                 }
+
             }
+
         }
 
 
@@ -338,6 +341,11 @@ namespace GuzzLaunhcer
         private void label1_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Changing the game directory will delete all the games!", caption: "Be Careful!", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Warning);
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
@@ -451,7 +459,7 @@ public class GameBox
 
                 //MessageBox.Show("Indirme Basladi = " + this.DownloadLink);
                 if(isDownloading == false)
-                {
+                { 
                     await GuzzLaunhcer.GuzzLauncher.DownloadGame(this.gameName, DownloadLink);
 
                     this.CheckGameStatus();

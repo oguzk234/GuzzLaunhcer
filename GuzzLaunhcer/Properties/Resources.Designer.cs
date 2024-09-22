@@ -69,5 +69,15 @@ namespace GuzzLaunhcer.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap türünde yerelleştirilmiş bir kaynak arar.
+        /// </summary>
+        internal static System.Drawing.Bitmap Cool_Text___Guzz_Launhcer_466754472947447 {
+            get {
+                object obj = ResourceManager.GetObject("Cool Text - Guzz Launhcer 466754472947447", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }
