@@ -18,6 +18,8 @@ namespace GuzzLaunhcer
     public partial class GuzzLauncher : Form
     {
         string appDir;
+
+        string appDataDir;
         string configFileDir;
         public static string downloadDir;
 
@@ -41,7 +43,10 @@ namespace GuzzLaunhcer
         {
             appDir = AppDomain.CurrentDomain.BaseDirectory;
             //configFileDir = System.IO.Path.Combine(appDir, "config.txt");
-            //configFileDir = "C:\\GuzzLauncher";
+
+            Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "GuzzLauncher"));
+            appDataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "GuzzLauncher");
+            configFileDir = Path.Combine(appDataDir, "config.txt"); 
 
             //downloadDir = File.ReadLines(configFileDir).First(); // FIRST SETUP CHECK DE KONTROL EDILIYOR
 
@@ -214,6 +219,8 @@ namespace GuzzLaunhcer
                     HttpResponseMessage response = await client.GetAsync(url);
                     response.EnsureSuccessStatusCode();
 
+                    var contentLength = response.Content.Headers.ContentLength;
+
                     using (FileStream fs = new FileStream(gameRarFile, FileMode.Create, FileAccess.Write, FileShare.None))
                     {
                         await response.Content.CopyToAsync(fs);
@@ -228,6 +235,7 @@ namespace GuzzLaunhcer
                     File.Delete(gameRarFile);
 
                     GameBox downloadedGame = FindGameFromName(gameFolderName);
+                    downloadedGame.isDownloading = false;
                     downloadedGame.CheckGameStatus();
                     downloadedGame.CheckButtonStatus();
 
@@ -279,6 +287,8 @@ public class GameBox
     public GameStatus gameStatus = GameStatus.NotDownloaded;
 
     public string DownloadLink;
+
+    public bool isDownloading = false;
 
     public GameBox(string GameName, Point GameLocation, Image GameImage , string Version , string downloadlink)
     {
@@ -350,9 +360,22 @@ public class GameBox
             case GameStatus.NotDownloaded:
 
                 //MessageBox.Show("Indirme Basladi = " + this.DownloadLink);
-                await GuzzLaunhcer.GuzzLauncher.DownloadGame(this.gameName, DownloadLink);
-                //MessageBox.Show("Indirme Tamamlandi");
+                if(isDownloading == false)
+                {
+                    await GuzzLaunhcer.GuzzLauncher.DownloadGame(this.gameName, DownloadLink);
 
+                    this.CheckGameStatus();
+                    this.CheckButtonStatus();
+
+                    isDownloading = true;
+                }
+                else
+                {
+                    MessageBox.Show("Already Downloading " + this.gameName);
+                }
+
+
+                //MessageBox.Show("Indirme Tamamlandi");
                 break;
 
 
@@ -379,10 +402,22 @@ public class GameBox
 
 
             case GameStatus.UpdateNeeded:
-                if (Directory.Exists(GamePath))
+
+                if (isDownloading == false)
                 {
-                    Directory.Delete(GamePath, true);
+                    if (Directory.Exists(GamePath))
+                    {
+                        Directory.Delete(GamePath, true);
+                        await GuzzLaunhcer.GuzzLauncher.DownloadGame(this.gameName, DownloadLink);
+
+                        this.CheckGameStatus();
+                        this.CheckButtonStatus();
+
+                        isDownloading = true;
+                    }
+
                 }
+
                 await GuzzLaunhcer.GuzzLauncher.DownloadGame(this.gameName, DownloadLink);
 
 
@@ -441,7 +476,7 @@ public class GameBox
             }
             else if (GameConfigLines[0] == version)
             {
-                MessageBox.Show("SÜRÜM GÜNCEL");
+                //MessageBox.Show("SÜRÜM GÜNCEL");
                 this.gameStatus = GameStatus.ReadyToPlay;
             }
             else
